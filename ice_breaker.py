@@ -1,11 +1,15 @@
+from dotenv import load_dotenv
 from langchain.prompts.prompt import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_openai import ChatOpenAI
-
+from agents.linkedin_lookup_agent import lookup as linkedin_lookup_agent
 from third_parties.linkedin import scrape_linkedin_profile
 
-if __name__ == "__main__":
-    print("Hello")
+
+def ice_breaker_with(name: str) -> str:
+    linkedin_username = linkedin_lookup_agent(name=name)
+    linkedin_data = scrape_linkedin_profile(linkedin_profile_url="https://linkedin.com/in/johnrmarty/")
+    #linkedin_data = scrape_linkedin_profile(linkedin_profile_url=linkedin_username)
 
     summary_template = """
         given the Linkedin information {information} about a person from what I want you to create:
@@ -20,7 +24,12 @@ if __name__ == "__main__":
 
     chain = summary_prompt_template | llm | StrOutputParser()
 
-    linkedin_data = scrape_linkedin_profile(linkedin_profile_url="https://linkedin.com/in/johnrmarty/")
+   # linkedin_data = scrape_linkedin_profile(linkedin_profile_url="https://linkedin.com/in/johnrmarty/")
     res = chain.invoke(input={"information": linkedin_data})
 
     print(res)
+
+if __name__ == "__main__":
+    load_dotenv()
+    print("Ice breaker Enter")
+    ice_breaker_with(name="Masha Volska")
