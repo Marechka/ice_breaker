@@ -11,6 +11,15 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
+@app.route("/process", methods=["POST"])
+def process():
+    name= request.form["name"]
+    summary, profile_pic_url = ice_breaker_with(name=name)
+    return jsonify({
+        "summary_and_facts":summary.to_dict(),
+        "picture_url": profile_pic_url,
+    })
+
 
 
 if __name__ == "__main__":
